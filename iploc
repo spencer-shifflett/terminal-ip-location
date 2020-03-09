@@ -1,0 +1,33 @@
+#!/usr/bin/env python3
+from ip2geotools.databases.noncommercial import DbIpCity
+import requests
+print("Obtaining Public IP address...")
+try:
+	ip = requests.get('http://ipecho.net/plain').text
+	print("\x1b[1;32mPass!\x1b[0;0m")
+except:
+	print("\x1b[1;31mERROR: FAILED TO OBTAIN IP ADDRESS\x1b[0;0m")
+print("Attempting to obtain IP geolocation...")
+try:
+	ip = requests.get('http://ipecho.net/plain').text
+	response = DbIpCity.get(ip, api_key='free')
+	ip_addr = response.ip_address
+	country = response.country
+	region = response.region
+	city = response.city
+	latitude = response.latitude
+	longitude = response.longitude
+	print("Found!\n\nIP Address:  " + ip_addr)
+	print("Country:     " + country)
+	print("Region:      " + region)
+	print("City:        " + city)
+	print("Latitude:    " + str(latitude))
+	print("longitude:  " + str(longitude))
+
+except:
+	tCheck = requests.get('https://check.torproject.org/').text
+	if 'Congratulations' in tCheck:
+		print("\x1b[1;31mFail! Location can not be determined because you are connected to Tor.\x1b[0;0m")
+	else:
+		print("\x1b[1;31mFail! Could not determine location.\x1b[0;0m")
+	print("\nIP Address:  " + ip)
